@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Congreso Nacional J&o&oacute;venes - IID</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        <link rel="stylesheet" href="http://cdn.materialdesignicons.com/1.7.22/css/materialdesignicons.min.css" />
+        <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css" />
+        <link rel="stylesheet" href="./vendor/waves/waves.min.css" />
+        <link rel="stylesheet" href="./vendor/wow/animate.css" />
+        <link rel="stylesheet" href="./css/nativedroid2.css" />        
+        <link rel="stylesheet" href="./css/nativedroid2.color.blue-grey.css" />
+
+
+        <style>
+            /* Prevent FOUC */
+            body { opacity: 0; }
+        </style>
+
+    </head>
+    <body>
+
+        <div data-role="page" id="pgMain">
+
+            <nd2-include data-src="examples/fragments/panel.left.html"></nd2-include>
+
+            <div data-role="header" data-position="fixed" class="wow fadeIn">
+                <a href="#leftpanel" class="ui-btn ui-btn-left" data-wow-delay='0.8s'><i class="mdi mdi-menu"></i></a>
+                <h3 class="wow fadeIn" data-wow-delay='0.4s'>Inicio</h3>
+                <a href="#btnScan" onclick="scan();" class="ui-btn ui-btn-right  wow fadeIn" data-wow-delay='0.8s'><i class="mdi mdi-qrcode-scan"></i></a>                
+            </div>
+            <div role="main" class="ui-content wow fadeIn" data-wow-delay="0.2s"  data-inset="false">
+                <a onclick="mostrar();" class="ui-btn ui-btn-fab">Mostrar Comidas</a>
+            </div>
+            
+        </div>
+        <div data-role="page" id="pgMeals"> 
+            <div data-role="header" data-position="fixed" class="wow fadeIn">
+                <a href="#pgMain" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s' data-rel="back"><i class="mdi mdi-arrow-left"></i></a>
+                <h3 class="wow fadeIn" data-wow-delay='0.4s'>Comidas</h3>
+                <a href="#btnOptions" class="ui-btn ui-btn-right  wow fadeIn" data-wow-delay='0.8s'><i class="mdi mdi-dots-vertical"></i></a>                
+            </div>
+            <div data-role="main" class="ui-content wow fadeIn" data-wow-delay="0.2s"  data-inset="false">
+                <div class="row">
+                    <div class="nd2-card card-media-right card-media-small wow fadeInDown">
+                        <div class="card-media">
+                            <img src="./img/avatar_smart_guy-512.png">
+                        </div>
+                        <div class="card-title">
+                            <h4 class="card-primary-title">Nombre Participante</h4>
+                            <h5 class="card-subtitle">Informaci&oacute;n relevante.</h5>
+                        </div>
+                    </div>
+                </div>
+                <!-- Comidas -->
+                <div data-role="content" id="meals">
+                    <!-- Desayuno -->                    
+                </div>
+                <div data-role="footer"></div>
+            </div>
+        </div>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+        <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+        <script src="./vendor/waves/waves.min.js"></script>
+        <script src="./vendor/wow/wow.min.js"></script>
+        <script src="./js/nativedroid2.js"></script>
+        <script src="nd2settings.js"></script>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="./js/app.js"></script>
+        
+        <script>
+            function scan()
+            {
+                cordova.plugins.barcodeScanner.scan(
+                        function (result) {
+                            if (!result.cancelled)
+                            {
+                                if (result.format == "QR_CODE")
+                                {
+                                    $("body").pagecontainer('change',"#pgMeals", {showLoadMsg: 'true'});
+                                    $.getJSON(result.text, function (jsonRes) {
+                                        /*$.each(result, function (i, field) {
+                                         $("#output").append("Title: " + field.a + " duration: " + field.b + " Price:" + field.c + "<br/>");
+                                         });*/
+                                        for (var i = 0; i < 5; i++){
+                                            $("#meals").card();
+                                        }
+                                    });
+                                }
+                            }
+                        },
+                        function (error) {
+                            alert("Scanning failed: " + error);
+                        }
+                );
+            }
+            
+            function mostrar()
+            {
+                $("body").pagecontainer('change',"#pgMeals", {showLoadMsg: 'true'});        
+                //$("#meals").card();
+                for (i = 0; i < 5; i++){
+                    $("#meals").append($.prodev.card({id:i}).option("html"));
+                }
+                alert(i);
+            }
+          
+            
+            $(document).ready(function(){
+            });
+        </script>
+
+    </body>
+</html>
