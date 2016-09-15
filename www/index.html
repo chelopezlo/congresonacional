@@ -32,6 +32,7 @@
             </div>
             <div role="main" class="ui-content wow fadeIn" data-wow-delay="0.2s"  data-inset="false">
                 <a onclick="mostrar();" class="ui-btn ui-btn-fab">Mostrar Comidas</a>
+                
             </div>
             
         </div>
@@ -42,14 +43,31 @@
                 <a href="#btnOptions" class="ui-btn ui-btn-right  wow fadeIn" data-wow-delay='0.8s'><i class="mdi mdi-dots-vertical"></i></a>                
             </div>
             <div data-role="main" class="ui-content wow fadeIn" data-wow-delay="0.2s"  data-inset="false">
+                <div class="row" id="divInfoPersona">
+                    
+                </div>
+                <!-- Comidas -->
+                <div data-role="content" id="meals">
+                    <!-- Desayuno -->                    
+                </div>
+                <div data-role="footer"></div>
+            </div>
+        </div>
+        <div data-role="page" id="pgEvents"> 
+            <div data-role="header" data-position="fixed" class="wow fadeIn">
+                <a href="#pgMain" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s' data-rel="back"><i class="mdi mdi-arrow-left"></i></a>
+                <h3 class="wow fadeIn" data-wow-delay='0.4s'>Comidas</h3>
+                <a href="#btnOptions" class="ui-btn ui-btn-right  wow fadeIn" data-wow-delay='0.8s'><i class="mdi mdi-dots-vertical"></i></a>                
+            </div>
+            <div data-role="main" class="ui-content wow fadeIn" data-wow-delay="0.2s"  data-inset="false">
                 <div class="row">
                     <div class="nd2-card card-media-right card-media-small wow fadeInDown">
                         <div class="card-media">
-                            <img src="./img/avatar_smart_guy-512.png">
+                            <img id="imgAvatar" src="./img/avatar_smart_guy-512.png">
                         </div>
                         <div class="card-title">
-                            <h4 class="card-primary-title">Nombre Participante</h4>
-                            <h5 class="card-subtitle">Informaci&oacute;n relevante.</h5>
+                            <h4 class="card-primary-title" id="hdrName">Nombre Participante</h4>
+                            <h5 class="card-subtitle" id="hdrText">Informaci&oacute;n relevante.</h5>
                         </div>
                     </div>
                 </div>
@@ -81,14 +99,35 @@
                                 if (result.format == "QR_CODE")
                                 {
                                     $("body").pagecontainer('change',"#pgMeals", {showLoadMsg: 'true'});
-                                    $.getJSON(result.text, function (jsonRes) {
-                                        /*$.each(result, function (i, field) {
-                                         $("#output").append("Title: " + field.a + " duration: " + field.b + " Price:" + field.c + "<br/>");
-                                         });*/
-                                        for (var i = 0; i < 5; i++){
-                                            $("#meals").card();
-                                        }
-                                    });
+                                    $.getJSON(result.text, {id:1})
+                                            .done(function (jsonRes) {
+                                                if(jsonRes.PERSONA)
+                                                {
+                                                    //Info de la persona
+                                                    $("#divInfoPersona").append($.prodev.card({
+                                                        image: jsonRes.PERSONA.IMAGE,
+                                                        title: jsonRes.PERSONA.NAME,
+                                                        text: jsonRes.PERSONA.INFO,
+                                                        id: jsonRes.PERSONA.ID
+                                                    }).option("html"));
+                                                    
+                                                    //Listado de opciones para la persona #comidas
+                                                    //$.each(jsonRes.PERSONA.OPTIONS, function (i, field) {
+                                                        $("#meals").append($.prodev.card({
+                                                            id: jsonRes.PERSONA.OPTIONS.ID,
+                                                            image: jsonRes.PERSONA.OPTIONS.IMAGE,
+                                                            title: jsonRes.PERSONA.OPTIONS.TITLE,
+                                                            text: jsonRes.PERSONA.OPTIONS.TEXT,
+                                                            status: jsonRes.PERSONA.OPTIONS.STATUS
+                                                        }).option("html"));
+                                                    //});
+                                                }
+                                            })
+                                            .fail(function()
+                                            {
+
+                                            });
+
                                 }
                             }
                         },
