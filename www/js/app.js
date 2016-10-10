@@ -21,15 +21,11 @@ $.widget( "prodev.card", {
     _create: function() {
         var box = '';
         var status = 'disabled';
-        if(this.options.status == 'BLOCKED')
-        {
-            status = 'disabled';
-        }
-        else if(this.options.status == 'OPEN')
+        if(this.options.registered == false)
         {
             status = '';
         }
-        box += '    <button class="ui-btn ui-btn-inline waves-effect waves-button" ' + status + '>';
+        box += '    <button class="ui-btn ui-btn-inline waves-effect waves-button btn-card" ' + status + ' data-id="' + this.options.id  + '">';
         box += '        <div class="nd2-card card-media-right card-media-small" id="' + this.options.id + '">';
         box += '            <div class="card-media"><img src="./img/' + this.options.image + '"></div>';
         box += '            <div class="card-title">';

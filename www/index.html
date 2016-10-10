@@ -31,7 +31,7 @@
                 <a href="#btnScan" onclick="scan();" class="ui-btn ui-btn-right  wow fadeIn" data-wow-delay='0.8s'><i class="mdi mdi-qrcode-scan"></i></a>                
             </div>
             <div role="main" class="ui-content wow fadeIn" data-wow-delay="0.2s"  data-inset="false">
-                <a onclick="mostrar();" class="ui-btn ui-btn-fab">Mostrar Comidas</a>
+                <a onclick="test();" class="ui-btn ui-btn-fab">Mostrar Comidas</a>
                 
             </div>
             
@@ -44,7 +44,6 @@
             </div>
             <div data-role="main" class="ui-content wow fadeIn" data-wow-delay="0.2s"  data-inset="false">
                 <div class="row" id="divInfoPersona">
-                    
                 </div>
                 <!-- Comidas -->
                 <div data-role="content" id="meals">
@@ -99,28 +98,29 @@
                                 if (result.format == "QR_CODE")
                                 {
                                     $("body").pagecontainer('change',"#pgMeals", {showLoadMsg: 'true'});
-                                    $.getJSON(result.text, {id:1})
+                                    $.getJSON(result.text)
                                             .done(function (jsonRes) {
-                                                if(jsonRes.PERSONA)
+                                                if(jsonRes.success)
                                                 {
                                                     //Info de la persona
-                                                    $("#divInfoPersona").append($.prodev.card({
-                                                        image: jsonRes.PERSONA.IMAGE,
-                                                        title: jsonRes.PERSONA.NAME,
-                                                        text: jsonRes.PERSONA.INFO,
-                                                        id: jsonRes.PERSONA.ID
+                                                    $("#divInfoPersona").html($.prodev.avatar({
+                                                        //image: jsonRes.data.IMAGE,
+                                                        title: jsonRes.data.full_name,
+                                                        text: jsonRes.data.description,
+                                                        id: jsonRes.data.id
                                                     }).option("html"));
                                                     
                                                     //Listado de opciones para la persona #comidas
-                                                    //$.each(jsonRes.PERSONA.OPTIONS, function (i, field) {
+                                                    $("#meals").html("");
+                                                    $.each(jsonRes.data.activity, function (i, activity) {
                                                         $("#meals").append($.prodev.card({
-                                                            id: jsonRes.PERSONA.OPTIONS.ID,
-                                                            image: jsonRes.PERSONA.OPTIONS.IMAGE,
-                                                            title: jsonRes.PERSONA.OPTIONS.TITLE,
-                                                            text: jsonRes.PERSONA.OPTIONS.TEXT,
-                                                            status: jsonRes.PERSONA.OPTIONS.STATUS
+                                                            id: activity.pivot.id,
+                                                            image: activity.icon,
+                                                            title: activity.name,
+                                                            text: activity.description,
+                                                            registered: activity.pivot.is_registered
                                                         }).option("html"));
-                                                    //});
+                                                    });
                                                 }
                                             })
                                             .fail(function()
@@ -146,9 +146,43 @@
                 }
                 alert(i);
             }
-          
+            
+            function test()
+            {
+                var url = "http://107.170.212.75/api/v1/personas/1";
+                var route = "api/v1/activities";
+                alert(url);
+                $.ajax({
+                    url: url
+                }).then(function(data) {
+                    alert(data);
+                });
+            }
             
             $(document).ready(function(){
+            });
+                
+            $(document).on("click", '.btn-card', function(){
+                
+                var activityId = $(this).attr('data-id');
+                var url = "http://esencia2016.cl/api/v1/user_activities/" + activityId;
+                alert(activityId);
+                $.ajax({
+                    url: url,
+                    type: "PUT",
+                    contentType: "application/json; charset=utf-8",
+                    data: {is_registered: 1},
+                    dataType: 'json',
+                    success: function (data, status, jqXHR) {
+                        alert(JSON.stringify(data, undefined, 2));
+                        $('.btn-card[data-id="' + activityId + '"').prop( "disabled", true );
+                    },
+
+                    error: function (jqXHR, status) {
+                        alert(jqXHR.statusText);
+
+                    }
+                });
             });
         </script>
 
