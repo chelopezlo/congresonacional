@@ -47,12 +47,12 @@
             </div>
             <div data-role="main" class="ui-content wow fadeIn" data-wow-delay="0.2s"  data-inset="false">
 
-                <div data-role="nd2tab" data-tab="comidas" id="#tabComidas"></div>
-                <div data-role="nd2tab" data-tab="talleres" id="#tabTalleres"></div>
-                <div data-role="nd2tab" data-tab="acciones" id="#tabAcciones"></div>                
-                <div data-role="footer" data-position="fixed">
-                    <div class="row" id="divInfoPersona"></div>
-                </div>
+                <div data-role="nd2tab" data-tab="comidas" id="tabComidas"></div>
+                <div data-role="nd2tab" data-tab="talleres" id="tabTalleres"></div>
+                <div data-role="nd2tab" data-tab="acciones" id="tabAcciones"></div>                
+            </div>
+            <div data-role="footer" data-position="fixed">
+                <div class="row" id="divInfoPersona"></div>
             </div>
         </div>
 
@@ -104,7 +104,7 @@
                             response($.map(data.data, function (value, key) {
                                 return {
                                     label: $.prodev.avatar({ image: value.image, title: value.full_name, text: value.rut, id:value.id}).option("html"),
-                                    value: value.id
+                                    value: value.code
                                 };
                             }));
                         },
@@ -123,7 +123,6 @@
 
             function scan()
             {
-                var url = "http://esencia2016.cl/api/v1";
                 cordova.plugins.barcodeScanner.scan(
                     function (result) {
                         if (!result.cancelled)
@@ -152,9 +151,7 @@
             function mostrarOpcionesPersona(id)
             {
                 var url = "http://esencia2016.cl/api/v1/personas/" + id;
-                //var url = "http://localhost:8000/api/v1/personas/" + id;
                 var personas = $("#divInfoPersona");
-                var opciones = $("#tabAcciones");
                 $("body").pagecontainer('change', "#pgOptions", {showLoadMsg: 'true'});
                 $.ajax({
                     url: url,
@@ -166,16 +163,19 @@
                         {
                             //Info de la persona
                             personas.html($.prodev.avatar({
-                                image: getImage(jsonRes.data.code),
-                                title: jsonRes.data.full_name,
-                                text: jsonRes.data.description,
-                                id: jsonRes.data.id
+                                image: getImage(data.data.code),
+                                title: data.data.full_name,
+                                text: data.data.description,
+                                id: data.data.id
                             }).option("html"));
 
-                            //Listado de opciones para la persona #comidas
-  
-                            opciones.html("");
-                            $.each(jsonRes.data.activity, function (i, activity) {
+                            //Listado de opciones para la persona
+                            $("#tabComidas").html("");
+                            $("#tabTalleres").html("");
+                            $("#tabAcciones").html("");
+                            
+                            var opciones;
+                            $.each(data.data.activity, function (i, activity) {
                                 switch(activity.activity_type.code)
                                 {
                                     case "MEALS":
