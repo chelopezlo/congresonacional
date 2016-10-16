@@ -594,7 +594,7 @@
                         var icon = (typeof item.icon !== 'undefined') ? "<i class='zmdi zmdi-" + item.icon + "'></i>" : "<i class='zmdi zmdi-" + _self.options.defaultIcon + "'></i>";
                         return $("<li class='nd2-search-result-item'>")
                             .attr("data-value", item.value)
-                            .append("<span class='icon'>" + icon + "</span><span class='term'>" + item.label + "</span>")
+                            .append(item.label)
                             .appendTo(ul);
                     };
 

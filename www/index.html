@@ -31,50 +31,28 @@
                 <a href="#btnScan" onclick="scan();" class="ui-btn ui-btn-right  wow fadeIn" data-wow-delay='0.8s'><i class="mdi mdi-qrcode-scan"></i></a>                
             </div>
             <div role="main" class="ui-content wow fadeIn" data-wow-delay="0.2s"  data-inset="false">
-                <a onclick="test();" class="ui-btn ui-btn-fab">Mostrar Comidas</a>
-                
             </div>
             
         </div>
-        <div data-role="page" id="pgMeals"> 
+        <div data-role="page" id="pgOptions"> 
             <div data-role="header" data-position="fixed" class="wow fadeIn">
                 <a href="#pgMain" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s' data-rel="back"><i class="mdi mdi-arrow-left"></i></a>
-                <h3 class="wow fadeIn" data-wow-delay='0.4s'>Comidas</h3>
-                <a href="#btnOptions" class="ui-btn ui-btn-right  wow fadeIn" data-wow-delay='0.8s'><i class="mdi mdi-dots-vertical"></i></a>                
+                <h3 class="wow fadeIn" data-wow-delay='0.4s'>Opciones</h3>
+                <a href="#btnOptions" class="ui-btn ui-btn-right  wow fadeIn" data-wow-delay='0.8s'><i class="mdi mdi-dots-vertical"></i></a>    
+                <ul data-role="nd2tabs" data-swipe="true">
+                        <li data-tab="comidas" data-tab-active="true">Comidas</li>
+                        <li data-tab="talleres">Talleres</li>
+                        <li data-tab="acciones">Acciones</li>
+                </ul>
             </div>
             <div data-role="main" class="ui-content wow fadeIn" data-wow-delay="0.2s"  data-inset="false">
-                <div class="row" id="divInfoPersona">
+
+                <div data-role="nd2tab" data-tab="comidas" id="#tabComidas"></div>
+                <div data-role="nd2tab" data-tab="talleres" id="#tabTalleres"></div>
+                <div data-role="nd2tab" data-tab="acciones" id="#tabAcciones"></div>                
+                <div data-role="footer" data-position="fixed">
+                    <div class="row" id="divInfoPersona"></div>
                 </div>
-                <!-- Comidas -->
-                <div data-role="content" id="meals">
-                    <!-- Desayuno -->                    
-                </div>
-                <div data-role="footer"></div>
-            </div>
-        </div>
-        <div data-role="page" id="pgEvents"> 
-            <div data-role="header" data-position="fixed" class="wow fadeIn">
-                <a href="#pgMain" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s' data-rel="back"><i class="mdi mdi-arrow-left"></i></a>
-                <h3 class="wow fadeIn" data-wow-delay='0.4s'>Comidas</h3>
-                <a href="#btnOptions" class="ui-btn ui-btn-right  wow fadeIn" data-wow-delay='0.8s'><i class="mdi mdi-dots-vertical"></i></a>                
-            </div>
-            <div data-role="main" class="ui-content wow fadeIn" data-wow-delay="0.2s"  data-inset="false">
-                <div class="row">
-                    <div class="nd2-card card-media-right card-media-small wow fadeInDown">
-                        <div class="card-media">
-                            <img id="imgAvatar" src="./img/avatar_smart_guy-512.png">
-                        </div>
-                        <div class="card-title">
-                            <h4 class="card-primary-title" id="hdrName">Nombre Participante</h4>
-                            <h5 class="card-subtitle" id="hdrText">Informaci&oacute;n relevante.</h5>
-                        </div>
-                    </div>
-                </div>
-                <!-- Comidas -->
-                <div data-role="content" id="meals">
-                    <!-- Desayuno -->                    
-                </div>
-                <div data-role="footer"></div>
             </div>
         </div>
 
@@ -89,101 +67,147 @@
         <script type="text/javascript" src="./js/app.js"></script>
         
         <script>
-            function scan()
-            {
-                cordova.plugins.barcodeScanner.scan(
-                        function (result) {
-                            if (!result.cancelled)
-                            {
-                                if (result.format == "QR_CODE")
-                                {
-                                    $("body").pagecontainer('change',"#pgMeals", {showLoadMsg: 'true'});
-                                    $.getJSON(result.text)
-                                            .done(function (jsonRes) {
-                                                if(jsonRes.success)
-                                                {
-                                                    //Info de la persona
-                                                    $("#divInfoPersona").html($.prodev.avatar({
-                                                        //image: jsonRes.data.IMAGE,
-                                                        title: jsonRes.data.full_name,
-                                                        text: jsonRes.data.description,
-                                                        id: jsonRes.data.id
-                                                    }).option("html"));
-                                                    
-                                                    //Listado de opciones para la persona #comidas
-                                                    $("#meals").html("");
-                                                    $.each(jsonRes.data.activity, function (i, activity) {
-                                                        $("#meals").append($.prodev.card({
-                                                            id: activity.pivot.id,
-                                                            image: activity.icon,
-                                                            title: activity.name,
-                                                            text: activity.description,
-                                                            registered: activity.pivot.is_registered
-                                                        }).option("html"));
-                                                    });
-                                                }
-                                            })
-                                            .fail(function()
-                                            {
-
-                                            });
-
-                                }
-                            }
-                        },
-                        function (error) {
-                            alert("Scanning failed: " + error);
-                        }
-                );
-            }
             
-            function mostrar()
-            {
-                $("body").pagecontainer('change',"#pgMeals", {showLoadMsg: 'true'});        
-                //$("#meals").card();
-                for (i = 0; i < 5; i++){
-                    $("#meals").append($.prodev.card({id:i}).option("html"));
-                }
-                alert(i);
-            }
-            
-            function test()
-            {
-                var url = "http://107.170.212.75/api/v1/personas/1";
-                var route = "api/v1/activities";
-                alert(url);
-                $.ajax({
-                    url: url
-                }).then(function(data) {
-                    alert(data);
-                });
-            }
-            
-            $(document).ready(function(){
-            });
-                
-            $(document).on("click", '.btn-card', function(){
-                
+            $(document).on("click", '.btn-card', function(){                
                 var activityId = $(this).attr('data-id');
-                var url = "http://esencia2016.cl/api/v1/user_activities/" + activityId;
-                alert(activityId);
+                var url = "http://esencia2016.cl/api/v1/user_activities/" + activityId;                
                 $.ajax({
+                    data: { is_registered: 1 },
                     url: url,
-                    type: "PUT",
-                    contentType: "application/json; charset=utf-8",
-                    data: {is_registered: 1},
+                    method: "PUT",
+                    contentType: "application/x-www-form-urlencoded",
                     dataType: 'json',
                     success: function (data, status, jqXHR) {
                         alert(JSON.stringify(data, undefined, 2));
                         $('.btn-card[data-id="' + activityId + '"').prop( "disabled", true );
                     },
-
                     error: function (jqXHR, status) {
                         alert(jqXHR.statusText);
 
                     }
                 });
             });
+            
+            new $.nd2Search({
+                placeholder : "Buscar",
+                defaultIcon : null,
+                source : function (request, response)
+                {
+                    var url = "http://esencia2016.cl/api/v1/personas";
+                    $.ajax({
+                        url: url,
+                        type: "GET",
+                        contentType: "application/json; charset=utf-8",
+                        data: {q: request.term},
+                        dataType: 'json',
+                        success: function (data, status, jqXHR) {
+                            response($.map(data.data, function (value, key) {
+                                return {
+                                    label: $.prodev.avatar({ image: value.image, title: value.full_name, text: value.rut, id:value.id}).option("html"),
+                                    value: value.id
+                                };
+                            }));
+                        },
+
+                        error: function (jqXHR, status) {
+                        }
+                    })
+                            .fail(function( jqXHR, textStatus, errorThrown ) {
+                                alert(textStatus);
+                            });
+                },
+                fn : function(result) {                    
+                    mostrarOpcionesPersona(result);
+                }
+            });
+
+            function scan()
+            {
+                var url = "http://esencia2016.cl/api/v1";
+                cordova.plugins.barcodeScanner.scan(
+                    function (result) {
+                        if (!result.cancelled)
+                        {
+                            if (result.format == "QR_CODE")
+                            {
+                                mostrarOpcionesPersona(result.text);
+                            }
+                        }
+                    },
+                    function (error) {
+                        alert("Scanning failed: " + error);
+                    }
+                );
+            }
+            
+
+            /**
+             * 
+             * @param {type} id
+             * @param {type} page
+             * @param {type} personaContainer
+             * @param {type} opcionesContainer
+             * @returns {undefined}
+             */
+            function mostrarOpcionesPersona(id)
+            {
+                var url = "http://esencia2016.cl/api/v1/personas/" + id;
+                //var url = "http://localhost:8000/api/v1/personas/" + id;
+                var personas = $("#divInfoPersona");
+                var opciones = $("#tabAcciones");
+                $("body").pagecontainer('change', "#pgOptions", {showLoadMsg: 'true'});
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: 'json',
+                    success: function (data, status, jqXHR) {
+                        if(data.success)
+                        {
+                            //Info de la persona
+                            personas.html($.prodev.avatar({
+                                image: getImage(jsonRes.data.code),
+                                title: jsonRes.data.full_name,
+                                text: jsonRes.data.description,
+                                id: jsonRes.data.id
+                            }).option("html"));
+
+                            //Listado de opciones para la persona #comidas
+  
+                            opciones.html("");
+                            $.each(jsonRes.data.activity, function (i, activity) {
+                                switch(activity.activity_type.code)
+                                {
+                                    case "MEALS":
+                                        opciones = $("#tabComidas");
+                                        break;
+                                    case "TALLER":
+                                        opciones = $("#tabTalleres");
+                                        break;
+                                    default:
+                                        opciones = $("#tabAcciones");
+                                        break;
+                                }
+                                opciones.append($.prodev.card({
+                                    id: activity.pivot.id,
+                                    image: activity.icon,
+                                    title: activity.name,
+                                    text: activity.description,
+                                    registered: activity.pivot.is_registered
+                                }).option("html"));
+                            });
+                        }                    
+                    },
+                    error: function (jqXHR, status) {
+                        alert(status);
+                    }
+                });
+            }          
+            
+            function getImage(code)
+            {
+                return "./img/logo.png";
+            }
         </script>
 
     </body>
