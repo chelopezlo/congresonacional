@@ -21,11 +21,11 @@ $.widget( "prodev.card", {
     _create: function() {
         var box = '';
         var status = 'disabled';
-        if(this.options.registered == false)
+        if(this.options.registered != true)
         {
             status = '';
         }
-        box += '    <button class="ui-btn ui-btn-inline waves-effect waves-button btn-card" ' + status + ' data-id="' + this.options.id  + '">';
+        box += '    <button class="ui-btn ui-btn-inline waves-effect waves-button btn-card data-card="opciones" " ' + status + ' data-id="' + this.options.id  + '">';
         box += '        <div class="nd2-card card-media-right card-media-small wow fadeInDown" id="' + this.options.id + '">';
         box += '            <div class="card-media"><img src="' + this.options.image + '"></div>';
         box += '            <div class="card-title">';
@@ -55,7 +55,7 @@ $.widget( "prodev.avatar", {
  
     _create: function() {
         var box = '';
-        box += '    <div class="nd2-card card-media-right card-media-small wow fadeInDown" data-id="' + this.options.id  + '">';
+        box += '    <div class="nd2-card card-media-right card-media-small wow fadeInDown" data-card="persona" data-id="' + this.options.id  + '">';
         box += '        <div class="card-media"><img src="' + this.options.image + '"></div>';
         box += '        <div class="card-title">';
         box += '            <h3 class="card-primary-title">' + this.options.title + '</h3>';

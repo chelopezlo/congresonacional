@@ -55,7 +55,19 @@
                 <div class="row" id="divInfoPersona"></div>
             </div>
         </div>
-
+        
+        <div data-role="page" id="pgDetallePersona"> 
+            <div data-role="header" data-position="fixed" class="wow fadeIn">
+                <a href="#pgMain" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s' data-rel="back"><i class="mdi mdi-arrow-left"></i></a>
+                <h3 class="wow fadeIn" data-wow-delay='0.4s'>Detalles</h3>
+                <a href="#btnOptions" class="ui-btn ui-btn-right  wow fadeIn" data-wow-delay='0.8s'><i class="mdi mdi-dots-vertical"></i></a>    
+            </div>
+            <div data-role="main" class="ui-content wow fadeIn" data-wow-delay="0.2s"  data-inset="false">             
+            </div>
+            <div data-role="footer" data-position="fixed">                
+            </div>
+        </div>
+        
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
         <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
@@ -70,7 +82,7 @@
             
             $(document).on("click", '.btn-card', function(){                
                 var activityId = $(this).attr('data-id');
-                var url = "http://esencia2016.cl/api/v1/user_activities/" + activityId;                
+                var url = "http://siga.esencia2016.cl/api/v1/user_activities/" + activityId;                
                 $.ajax({
                     data: { is_registered: 1 },
                     url: url,
@@ -78,7 +90,6 @@
                     contentType: "application/x-www-form-urlencoded",
                     dataType: 'json',
                     success: function (data, status, jqXHR) {
-                        alert(JSON.stringify(data, undefined, 2));
                         $('.btn-card[data-id="' + activityId + '"').prop( "disabled", true );
                     },
                     error: function (jqXHR, status) {
@@ -88,12 +99,32 @@
                 });
             });
             
+            $(document).on("click", '#pgOptions [data-card="persona"]', function(){                
+                var id = $(this).attr('data-id');
+                if(id != ''){
+                    var url = "http://siga.esencia2016.cl/api/v1/personas/" + id;           
+                    $.ajax({                    
+                        url: url,
+                        method: "GET",
+                        dataType: 'html',
+                        success: function (data, status, jqXHR) {
+                            $("body").pagecontainer('change', "#pgDetallePersona", {showLoadMsg: 'true'});
+                            //$("#pgDetallePersona [data-role='main']").html(data)
+                            $("#pgDetallePersona [data-role='main']").html($(data).filter("#page-content-wrapper"));
+                        },
+                        error: function (jqXHR, status) {
+                            alert(jqXHR.statusText);
+                        }
+                    });
+                }
+            });
+            
             new $.nd2Search({
                 placeholder : "Buscar",
                 defaultIcon : null,
                 source : function (request, response)
                 {
-                    var url = "http://esencia2016.cl/api/v1/personas";
+                    var url = "http://siga.esencia2016.cl/api/v1/personas";
                     $.ajax({
                         url: url,
                         type: "GET",
@@ -112,9 +143,9 @@
                         error: function (jqXHR, status) {
                         }
                     })
-                            .fail(function( jqXHR, textStatus, errorThrown ) {
-                                alert(textStatus);
-                            });
+                    .fail(function( jqXHR, textStatus, errorThrown ) {
+                        alert(textStatus);
+                    });
                 },
                 fn : function(result) {                    
                     mostrarOpcionesPersona(result);
@@ -150,58 +181,61 @@
              */
             function mostrarOpcionesPersona(id)
             {
-                var url = "http://esencia2016.cl/api/v1/personas/" + id;
-                var personas = $("#divInfoPersona");
-                $("body").pagecontainer('change', "#pgOptions", {showLoadMsg: 'true'});
-                $.ajax({
-                    url: url,
-                    type: "GET",
-                    contentType: "application/json; charset=utf-8",
-                    dataType: 'json',
-                    success: function (data, status, jqXHR) {
-                        if(data.success)
-                        {
-                            //Info de la persona
-                            personas.html($.prodev.avatar({
-                                image: getImage(data.data.code),
-                                title: data.data.full_name,
-                                text: data.data.description,
-                                id: data.data.id
-                            }).option("html"));
-
-                            //Listado de opciones para la persona
-                            $("#tabComidas").html("");
-                            $("#tabTalleres").html("");
-                            $("#tabAcciones").html("");
-                            
-                            var opciones;
-                            $.each(data.data.activity, function (i, activity) {
-                                switch(activity.activity_type.code)
-                                {
-                                    case "MEALS":
-                                        opciones = $("#tabComidas");
-                                        break;
-                                    case "TALLER":
-                                        opciones = $("#tabTalleres");
-                                        break;
-                                    default:
-                                        opciones = $("#tabAcciones");
-                                        break;
-                                }
-                                opciones.append($.prodev.card({
-                                    id: activity.pivot.id,
-                                    image: activity.icon,
-                                    title: activity.name,
-                                    text: activity.description,
-                                    registered: activity.pivot.is_registered
+                if(id != '')
+                {
+                    var url = "http://siga.esencia2016.cl/api/v1/personas/" + id;
+                    var personas = $("#divInfoPersona");
+                    $("body").pagecontainer('change', "#pgOptions", {showLoadMsg: 'true'});
+                    $.ajax({
+                        url: url,
+                        type: "GET",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: 'json',
+                        success: function (data, status, jqXHR) {
+                            if(data.success)
+                            {
+                                //Info de la persona
+                                personas.html($.prodev.avatar({
+                                    image: getImage(data.data.code),
+                                    title: data.data.full_name,
+                                    text: data.data.description,
+                                    id: data.data.id
                                 }).option("html"));
-                            });
-                        }                    
-                    },
-                    error: function (jqXHR, status) {
-                        alert(status);
-                    }
-                });
+
+                                //Listado de opciones para la persona
+                                $("#tabComidas").html("");
+                                $("#tabTalleres").html("");
+                                $("#tabAcciones").html("");
+
+                                var opciones;
+                                $.each(data.data.user_activity, function (i, user_activity) {
+                                    switch(user_activity.schedule.activity.activity_type_id)
+                                    {
+                                        case 1://"MEALS":
+                                            opciones = $("#tabComidas");
+                                            break;
+                                        case 2://"TALLER":
+                                            opciones = $("#tabTalleres");
+                                            break;
+                                        default:
+                                            opciones = $("#tabAcciones");
+                                            break;
+                                    }
+                                    opciones.append($.prodev.card({
+                                        id: user_activity.id,
+                                        image: user_activity.schedule.activity.icon,
+                                        title: user_activity.schedule.activity.name,
+                                        text: user_activity.schedule.activity.description + '<br />' + user_activity.schedule.from,
+                                        registered: user_activity.is_registered
+                                    }).option("html"));
+                                });
+                            }                    
+                        },
+                        error: function (jqXHR, status) {
+                            alert(status);
+                        }
+                    });
+                }                               
             }          
             
             function getImage(code)
